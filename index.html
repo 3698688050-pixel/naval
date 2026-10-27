@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《纳瓦尔宝典》读解 · 财富与幸福的操作系统</title>
+<style>
+  :root{
+    --bg:#f6f2ea;
+    --paper:#fffdf9;
+    --ink:#1d1b18;
+    --ink-soft:#565048;
+    --ink-faint:#8d867a;
+    --accent:#a9752a;
+    --accent-dark:#7d5418;
+    --accent-soft:#efe3cb;
+    --line:#e3dccc;
+    --serif:"Noto Serif SC","Songti SC","STSong",Georgia,"Times New Roman",serif;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;scroll-padding-top:86px}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--sans);
+    line-height:1.85;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+
+  /* ---------- 阅读进度条 ---------- */
+  #progress{
+    position:fixed;top:0;left:0;height:3px;width:0%;
+    background:linear-gradient(90deg,var(--accent),#d8a75a);
+    z-index:1000;transition:width .1s linear;
+  }
+
+  /* ---------- 顶部导航 ---------- */
+  #nav{
+    position:sticky;top:0;z-index:900;
+    background:rgba(246,242,234,.92);
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--line);
+  }
+  #nav .inner{
+    max-width:960px;margin:0 auto;
+    display:flex;gap:6px;align-items:center;
+    padding:12px 20px;
+    overflow-x:auto;
+    scrollbar-width:none;
+  }
+  #nav .inner::-webkit-scrollbar{display:none}
+  #nav .brand{
+    font-family:var(--serif);
+    font-weight:700;font-size:15px;
+    color:var(--accent-dark);
+    white-space:nowrap;
+    margin-right:14px;
+    letter-spacing:.5px;
+  }
+  #nav a{
+    flex:0 0 auto;
+    font-size:13px;
+    color:var(--ink-soft);
+    text-decoration:none;
+    padding:5px 12px;
+    border-radius:100px;
+    white-space:nowrap;
+    transition:all .22s ease;
+    border:1px solid transparent;
+  }
+  #nav a:hover{background:var(--accent-soft);color:var(--accent-dark)}
+  #nav a.active{
+    background:var(--accent-dark);color:#fff;border-color:var(--accent-dark);
+  }
+
+  /* ---------- 英雄区 ---------- */
+  header.hero{
+    max-width:960px;margin:0 auto;
+    padding:84px 24px 60px;
+    text-align:center;
+  }
+  .eyebrow{
+    display:inline-block;
+    font-size:12px;letter-spacing:3px;
+    color:var(--accent);text-transform:uppercase;
+    margin-bottom:22px;
+    padding:4px 14px;
+    border:1px solid var(--accent-soft);
+    border-radius:100px;
+  }
+  h1.title{
+    font-family:var(--serif);
+    font-size:clamp(38px,7vw,66px);
+    font-weight:700;
+    line-height:1.15;
+    letter-spacing:1px;
+    margin-bottom:16px;
+  }
+  h1.title em{
+    font-style:normal;
+    color:var(--accent);
+  }
+  .subtitle{
+    font-family:var(--serif);
+    font-size:clamp(16px,2.6vw,20px);
+    color:var(--ink-soft);
+    margin-bottom:32px;
+  }
+  .meta{
+    display:flex;flex-wrap:wrap;justify-content:center;gap:10px 22px;
+    font-size:13px;color:var(--ink-faint);
+    margin-bottom:48px;
+  }
+  .meta span{display:flex;align-items:center;gap:6px}
+  .meta span::before{
+    content:"";width:4px;height:4px;border-radius:50%;
+    background:var(--accent);display:inline-block;
+  }
+  .meta span:first-child::before{display:none}
+
+  .lede{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-left:3px solid var(--accent);
+    border-radius:4px;
+    padding:30px 32px;
+    text-align:left;
+    font-size:15.5px;
+    color:var(--ink-soft);
+    line-height:2;
+    max-width:760px;
+    margin:0 auto;
+  }
+  .lede strong{color:var(--ink);font-weight:600}
+  .lede .formula{
+    display:block;margin-top:16px;padding-top:16px;
+    border-top:1px dashed var(--line);
+    font-family:var(--serif);
+    font-size:15px;color:var(--accent-dark);
+  }
+
+  /* ---------- 主内容 ---------- */
+  main{max-width:880px;margin:0 auto;padding:0 24px 40px}
+
+  .chapter{
+    position:relative;
+    padding:66px 0 20px;
+  }
+  .chapter + .chapter{
+    border-top:1px solid var(--line);
+  }
+
+  .ch-head{
+    display:flex;align-items:baseline;gap:18px;
+    margin-bottom:34px;
+  }
+  .ch-num{
+    font-family:var(--serif);
+    font-size:clamp(44px,8vw,64px);
+    font-weight:700;
+    line-height:1;
+    color:var(--accent-soft);
+    letter-spacing:-2px;
+    flex:0 0 auto;
+    user-select:none;
+  }
+  .ch-title-wrap{border-left:1px solid var(--line);padding-left:18px}
+  .ch-title{
+    font-family:var(--serif);
+    font-size:clamp(22px,4vw,30px);
+    font-weight:700;
+    letter-spacing:1px;
+    line-height:1.3;
+  }
+  .ch-sub{
+    font-size:13px;color:var(--ink-faint);
+    letter-spacing:1px;margin-top:2px;
+  }
+
+  /* 三个板块 */
+  .block{
+    margin-bottom:28px;
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:26px 28px;
+    transition:box-shadow .3s ease, transform .3s ease;
+  }
+  .block:hover{
+    box-shadow:0 8px 30px -14px rgba(120,95,40,.35);
+  }
+  .block-label{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:12px;letter-spacing:2px;
+    font-weight:600;
+    text-transform:uppercase;
+    color:var(--accent-dark);
+    margin-bottom:14px;
+  }
+  .block-label::before{
+    content:"";width:16px;height:1px;background:var(--accent);
+  }
+
+  .block p{
+    font-size:15px;color:var(--ink-soft);
+    margin-bottom:14px;
+  }
+  .block p:last-child{margin-bottom:0}
+  .block p strong{color:var(--ink);font-weight:600}
+
+  /* 提炼块特殊样式 */
+  .block.takeaway{
+    background:linear-gradient(135deg,#fdf8ee,#f7efdd);
+    border:1px solid var(--accent-soft);
+    border-left:3px solid var(--accent);
+  }
+  .block.takeaway .block-label{color:var(--accent-dark)}
+  .block.takeaway p{
+    font-family:var(--serif);
+    font-size:16.5px;
+    color:var(--ink);
+    line-height:1.9;
+  }
+  .block.takeaway p strong{color:var(--accent-dark)}
+
+  /* 案例条目 */
+  .case-item{
+    padding-left:16px;
+    border-left:2px solid var(--accent-soft);
+    margin-bottom:18px;
+  }
+  .case-item:last-child{margin-bottom:0}
+  .case-item h4{
+    font-size:14px;
+    font-weight:600;
+    color:var(--ink);
+    margin-bottom:4px;
+    letter-spacing:.3px;
+  }
+  .case-item p{
+    font-size:14.5px;
+    color:var(--ink-soft);
+    line-height:1.85;
+  }
+  .case-item p .hl{
+    background:linear-gradient(transparent 62%,var(--accent-soft) 62%);
+    color:var(--ink);
+    font-weight:600;
+    padding:0 1px;
+  }
+
+  /* ---------- 整体总结 ---------- */
+  .summary{
+    margin-top:70px;
+    padding:52px 36px;
+    background:var(--ink);
+    color:#e8e1d4;
+    border-radius:10px;
+    position:relative;
+    overflow:hidden;
+  }
+  .summary::before{
+    content:"";position:absolute;top:-60px;right:-60px;
+    width:220px;height:220px;border-radius:50%;
+    background:radial-gradient(circle,rgba(169,117,42,.28),transparent 70%);
+  }
+  .summary .block-label{color:#d8a75a}
+  .summary .block-label::before{background:#d8a75a}
+  .summary h2{
+    font-family:var(--serif);
+    font-size:clamp(24px,4.4vw,34px);
+    margin-bottom:26px;
+    letter-spacing:1px;
+    color:#f6f2ea;
+  }
+
+  .flow{
+    display:flex;flex-wrap:wrap;align-items:center;gap:10px;
+    margin-bottom:30px;
+    font-size:14px;
+  }
+  .flow .node{
+    background:rgba(216,167,90,.14);
+    border:1px solid rgba(216,167,90,.35);
+    padding:7px 15px;border-radius:100px;
+    color:#e8dcc4;white-space:nowrap;
+  }
+  .flow .arrow{color:#d8a75a;font-size:15px}
+
+  .summary p{
+    font-size:15px;line-height:1.95;
+    color:#c9c1b3;
+    margin-bottom:16px;
+  }
+  .summary p strong{color:#f0e7d6;font-weight:600}
+
+  .final-q{
+    margin-top:30px;
+    padding:24px 26px;
+    background:rgba(255,255,255,.05);
+    border-left:3px solid #d8a75a;
+    border-radius:4px;
+    font-family:var(--serif);
+    font-size:16.5px;
+    line-height:1.9;
+    color:#f0e7d6;
+  }
+  .final-q .small{
+    display:block;
+    margin-top:12px;
+    font-family:var(--sans);
+    font-size:13.5px;
+    color:#a89f8f;
+    line-height:1.9;
+  }
+
+  /* ---------- 阅读建议 ---------- */
+  .advice{
+    margin-top:36px;
+    padding:28px 30px;
+    border:1px dashed var(--accent-soft);
+    border-radius:8px;
+    background:var(--paper);
+  }
+  .advice .block-label{color:var(--accent-dark)}
+  .advice p{font-size:14.5px;color:var(--ink-soft);line-height:1.9}
+  .advice p + p{margin-top:10px}
+  .advice strong{color:var(--ink)}
+
+  /* ---------- 页脚 ---------- */
+  footer{
+    max-width:880px;margin:0 auto;
+    padding:50px 24px 70px;
+    text-align:center;
+    font-size:12.5px;
+    color:var(--ink-faint);
+    letter-spacing:.5px;
+  }
+  footer .mark{
+    font-family:var(--serif);
+    font-size:16px;color:var(--accent);
+    margin-bottom:8px;letter-spacing:2px;
+  }
+
+  /* ---------- 滚动浮现动画 ---------- */
+  .reveal{
+    opacity:0;transform:translateY(22px);
+    transition:opacity .7s cubic-bezier(.2,.7,.3,1),
+               transform .7s cubic-bezier(.2,.7,.3,1);
+  }
+  .reveal.show{opacity:1;transform:none}
+
+  @media (prefers-reduced-motion:reduce){
+    .reveal{opacity:1;transform:none;transition:none}
+    html{scroll-behavior:auto}
+  }
+
+  /* ---------- 响应式 ---------- */
+  @media (max-width:640px){
+    header.hero{padding:56px 20px 40px}
+    .lede{padding:22px 20px;font-size:14.5px}
+    main{padding:0 18px 30px}
+    .chapter{padding:48px 0 12px}
+    .ch-head{gap:12px;margin-bottom:26px}
+    .ch-title-wrap{padding-left:12px}
+    .block{padding:20px 18px;border-radius:5px}
+    .summary{padding:36px 22px;border-radius:8px}
+    .flow{font-size:12.5px}
+    .flow .node{padding:5px 12px}
+  }
+
+  ::selection{background:var(--accent-soft);color:var(--accent-dark)}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<nav id="nav">
+  <div class="inner">
+    <span class="brand">纳瓦尔宝典</span>
+    <a href="#ch1">01 积累财富</a>
+    <a href="#ch2">02 增强判断力</a>
+    <a href="#ch3">03 学习幸福</a>
+    <a href="#ch4">04 自我救赎</a>
+    <a href="#ch5">05 哲学</a>
+    <a href="#summary">整体总结</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="eyebrow">读书笔记 · 结构化读解</div>
+  <h1 class="title">《纳瓦尔宝典》<br><em>财富与幸福的操作系统</em></h1>
+  <p class="subtitle">纳瓦尔·拉维坎特 著 / 埃里克·乔根森 整理</p>
+  <div class="meta">
+    <span>五章拆解</span>
+    <span>每章：思想 → 案例 → 提炼</span>
+    <span>约 15 分钟读完</span>
+  </div>
+
+  <div class="lede">
+    <p>不是成功学，是一套可拆解、可检验的认知框架。</p>
+    <p style="margin-top:14px">全书五章，两条主线：<strong>财富</strong>（第 1–2 章）讲如何创造；<strong>幸福</strong>（第 3–5 章）讲如何安放。纳瓦尔把人生三要素按重要性倒着排——<strong>幸福第一，健康第二，财富第三</strong>。但书从财富写起，因为财富是多数人当下最紧迫的约束条件。</p>
+    <span class="formula">阅读路径：财富（专长 × 杠杆 × 判断力）→ 时间与选择权 → 练习幸福 → 判断力更清晰 → 反哺下一轮创造</span>
+  </div>
+</header>
+
+<main>
+
+  <!-- ============ 第一章 ============ -->
+  <section class="chapter reveal" id="ch1">
+    <div class="ch-head">
+      <div class="ch-num">01</div>
+      <div class="ch-title-wrap">
+        <h2 class="ch-title">积累财富</h2>
+        <div class="ch-sub">把自己产品化</div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-label">主要思想</div>
+      <p>核心命题只有一句：<strong>把自己产品化</strong>。“自己”是独特性与责任感，“产品化”是专长加杠杆。</p>
+      <p>财富不等于金钱，也不等于地位。财富是“睡觉时也能带来收入的资产”。靠出租时间永远无法致富，必须找到<strong>专长</strong>——那种对你像玩耍、对别人像工作、无法通过培训批量复制的知识。</p>
+      <p>然后加上<strong>杠杆</strong>。杠杆分三种：劳动力（需要许可）、资本（需要许可）、代码与媒体（<strong>不需要任何人许可，边际复制成本为零</strong>）。纳瓦尔认为第三种才是普通人真正能撬动的放大器。最后，以个人名义承担风险（责任），换取股权而非工资，保持耐心，让复利在长时间里发生。</p>
+      <p style="font-family:var(--serif);color:var(--accent-dark);font-size:16px">一句话：赚钱是一门手艺，不是一场赌博。</p>
+    </div>
+
+    <div class="block">
+      <div class="block-label">纳瓦尔自己的案例</div>
+      <p style="font-size:14.5px;color:var(--ink-faint);margin-bottom:20px">他不是先写书再讲道理的人，每一个主张背后都有可查的操作痕迹。</p>
+
+      <div class="case-item">
+        <h4>专长的积累路径</h4>
+        <p>他出生在印度新德里底层家庭，9 岁随母亲移民美国，从纽约贫民区起步，凭自学与毅力进入达特茅斯学院，修计算机科学与经济学双学位。计算机加经济学的组合，后来成为他判断科技公司与资本逻辑的底层语法——<span class="hl">专长不是单一技能，而是独特知识栈的叠加</span>。</p>
+      </div>
+
+      <div class="case-item">
+        <h4>杠杆的亲手使用</h4>
+        <p>1999 年，他与伙伴创办 Epinions，拿到 4500 万美元风投并合并上市，完成第一次资本杠杆的完整闭环。但真正体现他思想的是 2007 年之后的 <span class="hl">AngelList</span>：一个连接初创公司与天使投资人的平台，用代码和网络把“融资”这件事规模化，2022 年估值达到 40 亿美元。他没有雇一支庞大的销售团队去撮合交易（劳动力杠杆），也没有只用自己的钱去投（资本杠杆的有限版本），而是<strong>写了一个平台，让交易在代码上自动发生</strong>。</p>
+      </div>
+
+      <div class="case-item">
+        <h4>判断力的投资兑现</h4>
+        <p>他早年投资了 Uber、Twitter、Notion 等公司。AngelList 后来帮助硅谷约 25% 的科技企业完成融资，Twitter 和 Uber 本身也在其融资生态之中。这不是“眼光好”三个字能概括的——<span class="hl">它是在长期游戏中反复下注、让少数高质量判断在时间中展开的结果</span>。</p>
+      </div>
+    </div>
+
+    <div class="block takeaway">
+      <div class="block-label">章末提炼</div>
+      <p><strong>财富 = 专长 × 杠杆 × 责任 × 耐心。</strong>任何一个因子为零，乘积为零。纳瓦尔的路径是这四者的乘法，不是加法。</p>
+    </div>
+  </section>
+
+  <!-- ============ 第二章 ============ -->
+  <section class="chapter reveal" id="ch2">
+    <div class="ch-head">
+      <div class="ch-num">02</div>
+      <div class="ch-title-wrap">
+        <h2 class="ch-title">增强判断力</h2>
+        <div class="ch-sub">杠杆是判断力的倍增器</div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-label">主要思想</div>
+      <p>杠杆放大产出，也<strong>同比例放大错误</strong>。所以有了杠杆之后，判断力成为最稀缺的生产要素。</p>
+      <p>判断力不是“聪明”，是<strong>知道个人行为的长期后果，并据此决策</strong>的能力。它来自经验，但经验太慢；更快的路径是<strong>基础学科的心智模型</strong>——数学、进化生物学、心理学、微观经济学。这些学科不会直接告诉你答案，但会帮你识别“这次不一样”的幻觉。</p>
+      <p>纳瓦尔还有一个反直觉的决策规则：<strong>如果难以抉择，答案就是否定的</strong>。真正值得做的事，不需要你在选项之间反复撕扯。此外，分清<strong>金钱游戏</strong>（正和，创造财富）与<strong>地位游戏</strong>（零和，争夺排名），尽量只玩前者。</p>
+    </div>
+
+    <div class="block">
+      <div class="block-label">纳瓦尔自己的案例</div>
+
+      <div class="case-item">
+        <h4>和长期的人，玩长期的游戏</h4>
+        <p>这是纳瓦尔反复使用的一句话。他不在第一次见面就给人下判断，而是把关系放进一个<strong>重复博弈的结构</strong>里，让时间和连续互动替他筛选。<span class="hl">判断力在这里不是一次性的“看人准”，而是设计一个让好判断自动浮现的结构</span>。</p>
+      </div>
+
+      <div class="case-item">
+        <h4>让利是长期博弈里的理性</h4>
+        <p>与 Elad Gil 的合作中，对方主动多给好处，差额自掏腰包。纳瓦尔的解读是，这不是“人好”，这是<strong>长期游戏中的声誉定价</strong>。在一次性博弈里，多拿是理性；在长期博弈里，让利是理性。<span class="hl">判断力的高阶用法，是选择自己在玩哪一种游戏</span>。</p>
+      </div>
+
+      <div class="case-item">
+        <h4>用一年斟酌，用一天行动</h4>
+        <p>他把判断和执行在时间上分开：重大的、不可逆的决策，值得投入不成比例的时间去思考；一旦想清楚，执行要快。AngelList 的诞生本身就是一个判断先行的产物——在它之前，天使投资高度依赖私人关系网络；<span class="hl">纳瓦尔判断“这件事可以被平台化”，然后用代码去执行</span>。</p>
+      </div>
+    </div>
+
+    <div class="block takeaway">
+      <div class="block-label">章末提炼</div>
+      <p><strong>杠杆是判断力的倍增器。</strong>先确保判断力的方向对，再让杠杆放大它。顺序不能反。</p>
+    </div>
+  </section>
+
+  <!-- ============ 第三章 ============ -->
+  <section class="chapter reveal" id="ch3">
+    <div class="ch-head">
+      <div class="ch-num">03</div>
+      <div class="ch-title-wrap">
+        <h2 class="ch-title">学习幸福</h2>
+        <div class="ch-sub">幸福是技能，不是结果</div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-label">主要思想</div>
+      <p>幸福不是结果，是<strong>技能</strong>；不是快乐，是<strong>内心平和的副产品</strong>。</p>
+      <p>纳瓦尔对欲望的定义极其锋利：<strong>欲望是你跟自己签的合同，规定自己在得到某样东西之前不快乐</strong>。所以欲望越多，不快乐的时间越长。嫉妒是幸福的敌人，因为你不可能只嫉妒别人的某一部分，嫉妒是整体性的。</p>
+      <p>幸福的操作路径是三条：<strong>接受</strong>（接受无法控制的事）、<strong>当下</strong>（唯一真实存在的时间只有此刻）、<strong>减欲</strong>（主动选择少签几份“不快乐合同”）。这不是鸡汤，是一个可检验的减法系统：每减掉一个欲望，就减掉一段自己制造的不快乐。</p>
+    </div>
+
+    <div class="block">
+      <div class="block-label">纳瓦尔自己的案例</div>
+
+      <div class="case-item">
+        <h4>冥想：思想意识的间歇性禁食</h4>
+        <p>纳瓦尔没有说“我做到了”，他说的是“我在练”。每天 10–15 分钟，不评判冒出来的念头，让思绪来去。散步是行走冥想，写日记是书写冥想，冲澡是意外冥想——<span class="hl">冥想不局限于坐垫，它是一种在日常中清理噪声的习惯</span>。</p>
+      </div>
+
+      <div class="case-item">
+        <h4>排序本身就是信息</h4>
+        <p>一个已经拥有财富的人，把幸福放在财富前面。这不是姿态，是一个经历过财富的人给出的<strong>权重信息</strong>。他说自己从不把财富等同于快乐，<span class="hl">真幸福来自内心选择和对过程的享受，而不是钱包的厚度</span>。</p>
+      </div>
+    </div>
+
+    <div class="block takeaway">
+      <div class="block-label">章末提炼</div>
+      <p><strong>幸福是减法，不是加法。</strong>不是“得到更多”，是“需要更少”。</p>
+    </div>
+  </section>
+
+  <!-- ============ 第四章 ============ -->
+  <section class="chapter reveal" id="ch4">
+    <div class="ch-head">
+      <div class="ch-num">04</div>
+      <div class="ch-title-wrap">
+        <h2 class="ch-title">自我救赎</h2>
+        <div class="ch-sub">选择做自己</div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-label">主要思想</div>
+      <p>救赎不来自外部权威，来自<strong>选择做自己</strong>。</p>
+      <p>这一章把前三章的“向外”（财富、判断力）和第三章的“向内”（幸福）收束到<strong>行动主体</strong>上。你不可能用别人的地图走自己的路。具体操作包括：关爱身体（健康是一切的前置条件）、自我塑造（习惯而不是意志力）、<strong>解放自己</strong>（摆脱社会分配给你的身份标签）。</p>
+      <p>冥想在这里再次出现，但角色变了：第三章的冥想是<strong>获得幸福</strong>的工具，第四章的冥想是<strong>认识自己</strong>的方法。同一个动作，两个层次。</p>
+    </div>
+
+    <div class="block">
+      <div class="block-label">纳瓦尔自己的案例</div>
+
+      <div class="case-item">
+        <h4>案例的价值是证明路径存在，不是提供模板</h4>
+        <p>纳瓦尔的“做自己”有一个非常硬的内核：他从贫民区走到硅谷顶层，但<span class="hl">没有把路径包装成可复制的公式</span>。他讲专长，讲杠杆，讲判断力，但从不暗示“照着做你也能成为我”。因为专长的定义就是无法被标准化传授的东西——他的案例的价值不在于“模仿”，而在于<strong>证明那条路存在</strong>：一个没有初始资本、没有本地网络、没有家族背书的人，可以通过构建独特知识栈和不需要许可的杠杆，完成位置的迁移。</p>
+      </div>
+
+      <div class="case-item">
+        <h4>冥想是认知维护的刚需</h4>
+        <p>他的冥想实践不是“成功后的装饰”。在高压的创业和投资环境中，<span class="hl">清理噪声本身就是维持判断力质量的基础设施</span>。第四章的自我救赎，在他的生活里是第三章幸福的工具在第四章变成了认知维护的刚需。</p>
+      </div>
+    </div>
+
+    <div class="block takeaway">
+      <div class="block-label">章末提炼</div>
+      <p><strong>救赎从“选择做自己”开始，而不是从“变成更好的别人”开始。</strong></p>
+    </div>
+  </section>
+
+  <!-- ============ 第五章 ============ -->
+  <section class="chapter reveal" id="ch5">
+    <div class="ch-head">
+      <div class="ch-num">05</div>
+      <div class="ch-title-wrap">
+        <h2 class="ch-title">哲学</h2>
+        <div class="ch-sub">意义是私人问题</div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-label">主要思想</div>
+      <p>生命的意义是<strong>私人问题</strong>，没有标准答案，需要自己编造。</p>
+      <p>这一章篇幅最短，但它是整本书的底座。纳瓦尔不提供信仰，他提供一种<strong>理性佛教</strong>的姿态：以科学可验证的方式做内在修行，保留佛教中关于欲望、当下、平和的洞察，丢掉无法检验的形而上学承诺。</p>
+      <p>落到操作层面，就是一句话：<strong>按自己的价值观生活，志同则道合</strong>。不是先找一群人再找价值观，而是先厘清自己的价值观，同频的人自然筛选出来。</p>
+    </div>
+
+    <div class="block">
+      <div class="block-label">纳瓦尔自己的案例</div>
+
+      <div class="case-item">
+        <h4>基础学科是推理的底层代码</h4>
+        <p>他的“哲学”不是书房里的哲学。他公开谈论自己读历史、哲学、心理学，不是为了谈资，是为了<span class="hl">重建推理的底层代码</span>。一个从贫民区走出来、在硅谷做高风险判断的人，如果只靠行业经验，判断力的天花板会很快到达。他用基础学科把天花板往上顶。</p>
+      </div>
+
+      <div class="case-item">
+        <h4>哲学是降噪系统，不是安慰剂</h4>
+        <p>这也解释了他为什么在财富之后把大量精力放在幸福与哲学上。不是“赚够了所以谈点虚的”，是他在实操中发现：<span class="hl">杠杆越大，内在噪声对判断的干扰越致命</span>。哲学在他那里不是安慰，是降噪系统。</p>
+      </div>
+    </div>
+
+    <div class="block takeaway">
+      <div class="block-label">章末提炼</div>
+      <p><strong>除了当下，一切都是不存在的。</strong>意义是你此刻选择如何活出来的东西，不是死后才结算的账本。</p>
+    </div>
+  </section>
+
+  <!-- ============ 整体总结 ============ -->
+  <section class="summary reveal" id="summary">
+    <div class="block-label">整体总结</div>
+    <h2>五章压缩成一条回路</h2>
+
+    <div class="flow">
+      <span class="node">财富：专长 × 杠杆 × 判断力</span>
+      <span class="arrow">→</span>
+      <span class="node">时间与选择权</span>
+      <span class="arrow">→</span>
+      <span class="node">练习幸福：减欲 · 当下 · 接受</span>
+      <span class="arrow">→</span>
+      <span class="node">噪声清理，判断力更清晰</span>
+      <span class="arrow">→</span>
+      <span class="node">反哺下一轮创造</span>
+    </div>
+
+    <p>纳瓦尔的独特之处不在于某一个观点新鲜。专长、杠杆、复利、冥想，每一样都有人说过。他的贡献是把这些要素<strong>装进同一个人的生命轨迹里</strong>，并且用“把自己产品化”把向外创造和向内安顿连成一条线。</p>
+
+    <p>如果只从这本书带走一个可执行的动作，不是“去创业”，也不是“去冥想”，而是持续问自己一个问题：</p>
+
+    <div class="final-q">
+      我现在是在出租时间，还是在建造一个不需要我在场也能产生价值的东西？
+      <span class="small">这个问题同时适用于财富和幸福。财富上，它指向杠杆；幸福上，它指向不再用“忙碌”来回避“自己”。</span>
+    </div>
+  </section>
+
+  <!-- ============ 阅读建议 ============ -->
+  <section class="advice reveal">
+    <div class="block-label">阅读建议</div>
+    <p><strong>第 1–2 章</strong>适合带着纸笔读，每一条原则都试着找一个自己生活中的反例。</p>
+    <p><strong>第 3–5 章</strong>适合放慢速度，一次只读一章，读完当天做一次 10 分钟的不评判静坐，用体验去校准文字。</p>
+  </section>
+
+</main>
+
+<footer>
+  <div class="mark">NAVAL</div>
+  财富与幸福的操作系统 · 结构化读解<br>
+  按纳瓦尔的说法：读完之后，把它忘掉，去做。
+</footer>
+
+<script>
+(function(){
+  /* 阅读进度条 */
+  var progress = document.getElementById('progress');
+  function updateProgress(){
+    var h = document.documentElement;
+    var scrollTop = h.scrollTop || document.body.scrollTop;
+    var height = h.scrollHeight - h.clientHeight;
+    var pct = height > 0 ? (scrollTop / height) * 100 : 0;
+    progress.style.width = pct + '%';
+  }
+  window.addEventListener('scroll', updateProgress, {passive:true});
+  updateProgress();
+
+  /* 滚动浮现 */
+  var reveals = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting){
+          e.target.classList.add('show');
+          io.unobserve(e.target);
+        }
+      });
+    }, {threshold:0.08, rootMargin:'0px 0px -60px 0px'});
+    reveals.forEach(function(el){ io.observe(el); });
+  } else {
+    reveals.forEach(function(el){ el.classList.add('show'); });
+  }
+
+  /* 导航高亮 */
+  var navLinks = Array.prototype.slice.call(document.querySelectorAll('#nav a'));
+  var targets = navLinks.map(function(a){
+    return document.querySelector(a.getAttribute('href'));
+  }).filter(Boolean);
+
+  function highlight(){
+    var pos = window.scrollY + 140;
+    var current = -1;
+    targets.forEach(function(t, i){
+      if (t.offsetTop <= pos) current = i;
+    });
+    navLinks.forEach(function(a, i){
+      a.classList.toggle('active', i === current);
+    });
+  }
+  window.addEventListener('scroll', highlight, {passive:true});
+  highlight();
+})();
+</script>
+
+</body>
+</html>
